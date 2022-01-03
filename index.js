@@ -23,6 +23,7 @@ cron.schedule(
     });
 
     client.login(process.env.CLIENT_TOKEN);
+    client.destroy();
   },
   {
     scheduled: true,
