@@ -44,7 +44,7 @@ const main = client =>
           // channels
           // ['text-lords', 'general', 'buster']
           const generals = textChannels.filter(textChannel =>
-            ['buster-testing'].includes(textChannel.name),
+            ['text-lords', 'general', 'buster'].includes(textChannel.name),
           );
 
           const channelLog = new Logs({
