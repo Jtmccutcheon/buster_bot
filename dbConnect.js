@@ -7,8 +7,8 @@ const dbConnect = async () => {
   try {
     // eslint-disable-next-line no-unused-expressions
     await mongoose.connect(
-      process.env.MONGO_DB,
-      // process.env.TEST_DB,
+      // process.env.MONGO_DB,
+      process.env.TEST_DB,
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,

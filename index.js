@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 require('dotenv').config();
 const Discord = require('discord.js');
 const cron = require('node-cron');
@@ -15,15 +16,17 @@ cron.schedule(
     });
 
     client.on('ready', () => {
-      // eslint-disable-next-line no-console
       console.log(`Logged in as ${client.user.tag}!`);
       dbConnect();
 
       main(client);
     });
 
-    client.login(process.env.CLIENT_TOKEN);
-    client.destroy();
+    client.login(process.env.CLIENT_TOKEN).then(() =>
+      setTimeout(() => {
+        client.destroy();
+      }, 10000),
+    );
   },
   {
     scheduled: true,

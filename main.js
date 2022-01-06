@@ -44,7 +44,7 @@ const main = client =>
           // channels
           // ['text-lords', 'general', 'buster']
           const generals = textChannels.filter(textChannel =>
-            ['text-lords', 'general', 'buster'].includes(textChannel.name),
+            ['buster-testing'].includes(textChannel.name),
           );
 
           const channelLog = new Logs({
@@ -58,7 +58,7 @@ const main = client =>
           channelLog.save();
           generals.map(general =>
             general.send(
-              `Its 6:09 again which means its time to announce Buster of the Day! Congratulations <@${randomMemberId}>!!! You did it!! \nAnd remember, "${qoute.q}" - ${qoute.a}\nFor advanced buster analytics please visit https://busteranalytics-beta.netlify.app/`,
+              `Its 6:09 again which means its time to announce Buster of the Day! Congratulations <@${randomMemberUsername}>!!! You did it!! \nAnd remember, "${qoute.q}" - ${qoute.a}\nFor advanced buster analytics please visit https://busteranalytics-beta.netlify.app/`,
             ),
           );
         })
