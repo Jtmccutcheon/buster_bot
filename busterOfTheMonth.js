@@ -9,7 +9,7 @@ const busterOfTheMonth = async (date, client) => {
   const timestamp = new Date().toISOString();
   const botmLog = new Logs({
     timestamp,
-    log: 'BOTM Started',
+    log: 'BOTM STARTED',
     type: 'BOTM',
   });
   await botmLog.save();
@@ -112,10 +112,10 @@ const busterOfTheMonth = async (date, client) => {
       roles.create(newRole);
       const createRoleLog = new Logs({
         timestamp,
-        log: `creating role BOTM ${getMonthName(monthIndex)} ${year}`,
+        log: `CREATING NEW ROLE BOTM ${getMonthName(monthIndex)} ${year}`,
         type: 'DISCORD_CHANNEL',
       });
-      createRoleLog.save();
+      await createRoleLog.save();
 
       // get members from server that match winnerIds
       const members = await guild.members
@@ -136,13 +136,13 @@ const busterOfTheMonth = async (date, client) => {
 
       const addedRoleLog = new Logs({
         timestamp,
-        log: `Adding role ${botmRole.name} to members ${members
+        log: `ADDING ROLE ${botmRole.name} TO MEMBERS ${members
           .map(m => m.user.username)
           .join(',')}`,
         type: 'DISCORD_CHANNEL',
       });
 
-      addedRoleLog.save();
+      await addedRoleLog.save();
 
       const newBusterOTM = new BusterOTM({
         year,
@@ -151,6 +151,13 @@ const busterOfTheMonth = async (date, client) => {
       });
 
       await newBusterOTM.save();
+
+      const endBOTMLog = new Logs({
+        timestamp,
+        log: 'BOTM FINISHED',
+        type: 'BOTM',
+      });
+      await endBOTMLog.save();
     }
   });
 };
