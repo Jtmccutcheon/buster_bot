@@ -4,7 +4,7 @@ const Buster = require('./models/Buster');
 const Logs = require('./models/Logs');
 const fetchQuote = require('./utils/fetchQuote');
 
-const main = client =>
+const busterOfTheDay = client =>
   Promise.all(
     client.guilds.cache.map(async guild => {
       const members = await guild.members
@@ -81,7 +81,7 @@ const main = client =>
         if (!existingBuster) {
           const createBusterLog = new Logs({
             timestamp: dateWon,
-            log: `BUSTER RECORD DOES NOT EXIST ...CREATING NEW BUSTER RECORD FOR ${randomMemberUsername}`,
+            log: `BUSTER RECORD DOES NOT EXIST ...CREATING NEW BUSTER RECORD FOR ${randomMemberId}`,
             type: 'BUSTER_DATABASE',
           });
 
@@ -149,8 +149,8 @@ const main = client =>
       const timestamp = new Date().toISOString();
       const mainLog = new Logs({
         timestamp,
-        log: 'MAIN SUCESSFULLY EXECUTED',
-        type: 'MAIN',
+        log: 'BOTD SUCESSFULLY EXECUTED',
+        type: 'BOTD',
       });
 
       mainLog.save();
@@ -159,12 +159,12 @@ const main = client =>
       const timestamp = new Date().toISOString();
       const errLog = new Logs({
         timestamp,
-        log: 'MAIN_ERROR',
+        log: 'BOTD_ERROR',
         error: JSON.stringify(err),
-        type: 'MAIN',
+        type: 'BOTD',
       });
 
       errLog.save();
     });
 
-module.exports = main;
+module.exports = busterOfTheDay;
