@@ -11,6 +11,7 @@ const isLastDayOfMonth = require('./utils/isLastDayOfMonth');
 cron.schedule(
   '9 18 * * *',
   () => {
+    console.log('running buster of the day');
     const client = new Discord.Client({
       intents: [
         Discord.Intents.FLAGS.GUILDS,
@@ -37,11 +38,12 @@ cron.schedule(
   },
 );
 
-// buster of the month
+// Buster of the month
 cron.schedule(
-  '50 2 22 28-31 * *',
+  '50 9 18 28-31 * *',
   () => {
     if (isLastDayOfMonth()) {
+      console.log('running buster of the month');
       const client = new Discord.Client({
         intents: [
           Discord.Intents.FLAGS.GUILDS,
