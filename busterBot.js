@@ -7,7 +7,7 @@ const busterOfTheDay = require('./busterOfTheDay');
 const busterOfTheMonth = require('./busterOfTheMonth');
 const isLastDayOfMonth = require('./utils/isLastDayOfMonth');
 
-// daily cron job at 6:09pm est
+// Buster of the day
 cron.schedule(
   '9 18 * * *',
   () => {
@@ -37,7 +37,7 @@ cron.schedule(
   },
 );
 
-//
+// buster of the month
 cron.schedule(
   '50 2 22 28-31 * *',
   () => {

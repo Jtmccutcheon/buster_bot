@@ -2,14 +2,14 @@
   "name": "buster_bot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "busterBot.js",
   "engines": {
     "node": "17.x"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js",
-    "start": "node index.js"
+    "dev": "nodemon busterBot.js",
+    "start": "node busterBot.js"
   },
   "author": "",
   "license": "ISC",
