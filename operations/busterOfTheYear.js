@@ -141,6 +141,14 @@ const busterOfTheYear = async client =>
         });
 
         await newBusterOTY.save();
+
+        const newBusterOTYLog = new Logs({
+          timestamp: new Date().toISOString(),
+          log: `CREATING BOTY RECORD ${year}`,
+          type: 'BUSTER_DATABASE',
+        });
+
+        await newBusterOTYLog.save();
       }
 
       return null;

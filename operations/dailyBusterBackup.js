@@ -38,7 +38,7 @@ const dailyBusterBackup = async () => {
     const backupLog = new Logs({
       timestamp: new Date().toISOString(),
       log: 'DAILY BACKUP SUCESSFULLY EXECUTED',
-      type: 'BACKUP',
+      type: 'BUSTER_DATABASE',
     });
 
     await backupLog.save();
@@ -47,7 +47,7 @@ const dailyBusterBackup = async () => {
       timestamp: new Date().toISOString(),
       log: 'DAILY BACKUP ERROR',
       error: JSON.stringify(error),
-      type: 'BACKUP',
+      type: 'BUSTER_DATABASE',
     });
 
     await errorLog.save();
