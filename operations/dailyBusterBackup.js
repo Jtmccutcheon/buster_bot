@@ -3,13 +3,11 @@
 const fs = require('fs');
 const moment = require('moment');
 const orderBy = require('lodash/orderBy');
-const dbConnect = require('../dbConnect');
 const Buster = require('../models/Buster');
 const Backup = require('../models/Backup');
 const Logs = require('../models/Logs');
 
 const dailyBusterBackup = async () => {
-  dbConnect();
   const date = moment().format('YYYY-MM-DD');
   try {
     const busters = await Buster.find();
