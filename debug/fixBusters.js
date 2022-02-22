@@ -8,4 +8,4 @@ const dbConnect = require('../dbConnect');
 
 dbConnect();
 
-Buster.insertMany(busters);
+// Buster.insertMany(busters);

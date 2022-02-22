@@ -114,9 +114,19 @@ const busterOfTheYear = async client =>
 
         // create role for boty
         const { roles } = await guild;
+        const serverRoles = await roles.fetch();
+        const prevYearRole = serverRoles.find(r =>
+          r.name.includes(`BOTY ${Number(year) - 1}`),
+        );
+
+        const position = prevYearRole.position + 1;
+
         const newRole = {
           name: `BOTY ${year}`,
           color: getColor(),
+          mentionable: true,
+          hoist: true,
+          position,
         };
         roles.create(newRole);
 
@@ -129,8 +139,8 @@ const busterOfTheYear = async client =>
           .catch(() => []);
 
         // get role we created earlier from the server
-        const serverRoles = await roles.fetch();
-        const botyRole = serverRoles.find(r => r.name === `BOTY ${year}`);
+        const refetchRoles = await roles.fetch();
+        const botyRole = refetchRoles.find(r => r.name === `BOTY ${year}`);
 
         // add role to winners
         members.map(m => m.roles.add(botyRole));

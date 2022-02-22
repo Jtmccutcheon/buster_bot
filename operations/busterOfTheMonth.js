@@ -3,6 +3,7 @@ const BusterOTM = require('../models/BusterOTM');
 const Logs = require('../models/Logs');
 const getMonthString = require('../utils/getMonthString');
 const getMonthName = require('../utils/getMonthName');
+const getPrevMonthIndex = require('../utils/getPrevMonthIndex');
 const getColor = require('../utils/getColor');
 
 const busterOfTheMonth = async client =>
@@ -110,9 +111,22 @@ const busterOfTheMonth = async client =>
 
         // create role for current month
         const { roles } = await guild;
+        const serverRoles = await roles.fetch();
+
+        const prevMonthRole = serverRoles.find(
+          r =>
+            r.name ===
+            `BOTM ${getMonthName(getPrevMonthIndex(monthIndex))} ${year}`,
+        );
+
+        const position = prevMonthRole.position + 1;
+
         const newRole = {
           name: `BOTM ${getMonthName(monthIndex)} ${year}`,
           color: getColor(),
+          mentionable: true,
+          hoist: true,
+          position,
         };
         roles.create(newRole);
         const createRoleLog = new Logs({
@@ -131,8 +145,8 @@ const busterOfTheMonth = async client =>
           .catch(() => []);
 
         // get role we created earlier from the server
-        const serverRoles = await roles.fetch();
-        const botmRole = serverRoles.find(
+        const refetchRoles = await roles.fetch();
+        const botmRole = refetchRoles.find(
           r => r.name === `BOTM ${getMonthName(monthIndex)} ${year}`,
         );
 
