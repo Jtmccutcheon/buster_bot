@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon busterBot.js",
+    "dev": "nodemon --ignore backups/* busterBot.js",
     "start": "node busterBot.js"
   },
   "author": "",

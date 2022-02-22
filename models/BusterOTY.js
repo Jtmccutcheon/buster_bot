@@ -2,12 +2,8 @@
 /* eslint-disable no-multi-assign */
 const mongoose = require('mongoose');
 
-const BusterOTMSchema = new mongoose.Schema({
+const BusterOTYSchema = new mongoose.Schema({
   year: {
-    type: String,
-    required: true,
-  },
-  month: {
     type: String,
     required: true,
   },
@@ -34,7 +30,7 @@ const BusterOTMSchema = new mongoose.Schema({
   ],
 });
 
-module.exports = BusterOTM = mongoose.model(
-  'BustersOfTheMonths',
-  BusterOTMSchema,
+module.exports = BusterOTY = mongoose.model(
+  'BustersOfTheYears',
+  BusterOTYSchema,
 );

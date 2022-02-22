@@ -1,74 +1,52 @@
 /* eslint-disable no-console */
 require('dotenv').config();
-const Discord = require('discord.js');
 const cron = require('node-cron');
-const dbConnect = require('./dbConnect');
-const busterOfTheDay = require('./busterOfTheDay');
-const busterOfTheMonth = require('./busterOfTheMonth');
+const { CRON_EXPRESSIONS, CRON_OPTIONS } = require('./constants');
+const createBusterBotClient = require('./createBusterBotClient');
+const busterOfTheDay = require('./operations/busterOfTheDay');
+const busterOfTheMonth = require('./operations/busterOfTheMonth');
+const busterOfTheYear = require('./operations/busterOfTheYear');
+const dailyBusterBackup = require('./operations/dailyBusterBackup');
 const isLastDayOfMonth = require('./utils/isLastDayOfMonth');
 
 // Buster of the day
 cron.schedule(
-  '9 18 * * *',
+  CRON_EXPRESSIONS.botd,
   () => {
     console.log('running buster of the day');
-    const client = new Discord.Client({
-      intents: [
-        Discord.Intents.FLAGS.GUILDS,
-        Discord.Intents.FLAGS.GUILD_MEMBERS,
-      ],
-    });
-
-    client.on('ready', async () => {
-      console.log(`Logged in as ${client.user.tag}!`);
-      dbConnect();
-
-      busterOfTheDay(client);
-    });
-
-    client.login(process.env.CLIENT_TOKEN).then(() =>
-      setTimeout(() => {
-        client.destroy();
-      }, 10000),
-    );
+    createBusterBotClient(busterOfTheDay);
   },
-  {
-    scheduled: true,
-    timezone: 'America/New_York',
-  },
+  CRON_OPTIONS,
 );
 
 // Buster of the month
 cron.schedule(
-  '50 9 18 28-31 * *',
+  CRON_EXPRESSIONS.botm,
   () => {
     if (isLastDayOfMonth()) {
       console.log('running buster of the month');
-      const client = new Discord.Client({
-        intents: [
-          Discord.Intents.FLAGS.GUILDS,
-          Discord.Intents.FLAGS.GUILD_MEMBERS,
-        ],
-      });
-
-      client.on('ready', async () => {
-        console.log(`Logged in as ${client.user.tag}!`);
-        dbConnect();
-
-        const date = new Date();
-
-        busterOfTheMonth(date, client);
-      });
-
-      client.login(process.env.CLIENT_TOKEN).then(() =>
-        setTimeout(() => {
-          client.destroy();
-        }, 10000),
-      );
+      createBusterBotClient(busterOfTheMonth);
     }
   },
-  {
-    scheduled: true,
-    timezone: 'America/New_York',
+  CRON_OPTIONS,
+);
+
+// daily db backup
+cron.schedule(
+  CRON_EXPRESSIONS.backup,
+  () => {
+    console.log('creating back up');
+    dailyBusterBackup();
   },
+  CRON_OPTIONS,
+);
+
+// Buster of the year
+cron.schedule(
+  CRON_EXPRESSIONS.boty,
+  () => {
+    console.log('running buster of the year');
+    createBusterBotClient(busterOfTheYear);
+  },
+  CRON_OPTIONS,
 );

@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 const { get, sample } = require('lodash');
-const Buster = require('./models/Buster');
-const Logs = require('./models/Logs');
-const fetchQuote = require('./utils/fetchQuote');
+const Buster = require('../models/Buster');
+const Logs = require('../models/Logs');
+const fetchQuote = require('../utils/fetchQuote');
 
 const busterOfTheDay = client =>
   Promise.all(
@@ -29,7 +29,7 @@ const busterOfTheDay = client =>
       );
       const dateWon = new Date().toISOString();
 
-      const qoute = await fetchQuote();
+      const quote = await fetchQuote();
 
       await guild.channels
         .fetch()
@@ -47,24 +47,28 @@ const busterOfTheDay = client =>
             ['text-lords', 'general', 'buster'].includes(textChannel.name),
           );
 
-          const channelLog = new Logs({
-            timestamp: dateWon,
-            log: `POSTING TO GUILD ${guild.name} IN CHANNELS ${generals
-              .map(general => general.name)
-              .join(',')}`,
-            type: 'DISCORD_CHANNEL',
-          });
+          // only collect logs for my server
+          if (guild.name === 'Keylords') {
+            const channelLog = new Logs({
+              timestamp: new Date().toISOString(),
+              log: `POSTING TO GUILD ${guild.name} IN CHANNELS ${generals
+                .map(general => general.name)
+                .join(',')}`,
+              type: 'DISCORD_CHANNEL',
+            });
 
-          channelLog.save();
+            channelLog.save();
+          }
+
           generals.map(general =>
             general.send(
-              `Its 6:09 again which means its time to announce Buster of the Day! Congratulations <@${randomMemberId}>!!! You did it!! \nAnd remember, "${qoute.q}" - ${qoute.a}\nFor advanced buster analytics please visit https://busteranalytics-beta.netlify.app/`,
+              `Its 6:09 again which means its time to announce Buster of the Day! Congratulations <@${randomMemberId}>!!! You did it!! \nAnd remember, "${quote.q}" - ${quote.a}\nFor advanced buster analytics please visit https://busteranalytics-beta.netlify.app/`,
             ),
           );
         })
         .catch(err => {
           const channelErrorLog = new Logs({
-            timestamp: dateWon,
+            timestamp: new Date().toISOString(),
             log: 'ERROR FINDING TEXT CHANNEL',
             error: JSON.stringify(err),
             type: 'DISCORD_CHANNEL',
@@ -73,6 +77,7 @@ const busterOfTheDay = client =>
           channelErrorLog.save();
         });
 
+      // only save buster data for my server
       if (guild.name === 'Keylords') {
         const existingBuster = await Buster.findOne({
           discordId: randomMemberId,
@@ -80,7 +85,7 @@ const busterOfTheDay = client =>
 
         if (!existingBuster) {
           const createBusterLog = new Logs({
-            timestamp: dateWon,
+            timestamp: new Date().toISOString(),
             log: `BUSTER RECORD DOES NOT EXIST ...CREATING NEW BUSTER RECORD FOR ${randomMemberId}`,
             type: 'BUSTER_DATABASE',
           });
@@ -98,8 +103,8 @@ const busterOfTheDay = client =>
           console.log('new buster record sucessfully created');
         } else {
           const busterFoundLog = new Logs({
-            timestamp: dateWon,
-            log: `BUSTER RECORD ${existingBuster.id} FOUND ...UPDATING BUSTER`,
+            timestamp: new Date().toISOString(),
+            log: `BUSTER RECORD ${existingBuster.username} FOUND ...UPDATING BUSTER`,
             type: 'BUSTER_DATABASE',
           });
 
@@ -122,7 +127,7 @@ const busterOfTheDay = client =>
                 console.log('error updating buster record \n', err);
                 const updateBusterErrorLog = new Logs({
                   error: JSON.stringify(err),
-                  timestamp: dateWon,
+                  timestamp: new Date().toISOString(),
                   log: `ERROR UPDATING BUSTER RECORD ${existingBuster.id}`,
                   type: 'BUSTER_DATABASE',
                 });
@@ -132,7 +137,7 @@ const busterOfTheDay = client =>
               if (busterAfterUpdate) {
                 console.log('buster record sucessfully updated');
                 const busterUpdatedLog = new Logs({
-                  timestamp: dateWon,
+                  timestamp: new Date().toISOString(),
                   log: `BUSTER RECORD ${existingBuster.id} SUCESSFULLY UPDATED`,
                   type: 'BUSTER_DATABASE',
                 });
@@ -146,9 +151,8 @@ const busterOfTheDay = client =>
     }),
   )
     .then(() => {
-      const timestamp = new Date().toISOString();
       const mainLog = new Logs({
-        timestamp,
+        timestamp: new Date().toISOString(),
         log: 'BOTD SUCESSFULLY EXECUTED',
         type: 'BOTD',
       });
@@ -156,9 +160,8 @@ const busterOfTheDay = client =>
       mainLog.save();
     })
     .catch(err => {
-      const timestamp = new Date().toISOString();
       const errLog = new Logs({
-        timestamp,
+        timestamp: new Date().toISOString(),
         log: 'BOTD_ERROR',
         error: JSON.stringify(err),
         type: 'BOTD',

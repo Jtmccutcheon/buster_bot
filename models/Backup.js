@@ -1,16 +1,12 @@
-/* eslint-disable no-undef */
 /* eslint-disable no-multi-assign */
+/* eslint-disable no-undef */
+
+// schema should be 1 to 1 with Buster
+// used to create a daily backup collection
 const mongoose = require('mongoose');
 
-const BusterOTMSchema = new mongoose.Schema({
-  year: {
-    type: String,
-    required: true,
-  },
-  month: {
-    type: String,
-    required: true,
-  },
+const BackupSchema = new mongoose.Schema({
+  date: String,
   busters: [
     {
       discordId: {
@@ -34,7 +30,4 @@ const BusterOTMSchema = new mongoose.Schema({
   ],
 });
 
-module.exports = BusterOTM = mongoose.model(
-  'BustersOfTheMonths',
-  BusterOTMSchema,
-);
+module.exports = Backup = mongoose.model(`Backup`, BackupSchema);

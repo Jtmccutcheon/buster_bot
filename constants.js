@@ -1,9 +1,17 @@
-// 60 seconds in a minute, 1000 milliseconds in a second
-const MINUTE_INTERVAL = 60 * 1000;
-// 60 minutes in an hour 60 seconds in a minute, 1000 milliseconds in a second
-const HOUR_INTERVAL = 60 * 60 * 1000;
+const CRON_EXPRESSIONS = {
+  botd: '9 18 * * *', // At 06:09 PM everday
+  backup: '11 18 * * *', // At 06:12 PM everday
+  botm: '50 9 18 28-31 * *', // At 06:09:50 PM, between day 28 and 31 of the month
+  boty: '15 18 31 12 *', // At 06:15 PM, on day 31 of the month, only in December
+  debug: '16 23 * * *',
+};
+
+const CRON_OPTIONS = {
+  scheduled: true,
+  timezone: 'America/New_York',
+};
 
 module.exports = {
-  MINUTE_INTERVAL,
-  HOUR_INTERVAL,
+  CRON_EXPRESSIONS,
+  CRON_OPTIONS,
 };
