@@ -10,6 +10,7 @@ const LogSchema = new mongoose.Schema({
   },
   error: {
     type: String,
+    default: 'no data',
   },
   log: {
     type: String,

@@ -3,6 +3,7 @@ const { get, sample } = require('lodash');
 const Buster = require('../models/Buster');
 const Logs = require('../models/Logs');
 const fetchQuote = require('../utils/fetchQuote');
+const createLogs = require('../utils/createLogs');
 
 const busterOfTheDay = client =>
   Promise.all(
@@ -49,15 +50,12 @@ const busterOfTheDay = client =>
 
           // only collect logs for my server
           if (guild.name === 'Keylords') {
-            const channelLog = new Logs({
-              timestamp: new Date().toISOString(),
+            createLogs({
               log: `POSTING TO GUILD ${guild.name} IN CHANNELS ${generals
                 .map(general => general.name)
                 .join(',')}`,
-              type: 'DISCORD_CHANNEL',
+              type: 'DISCORD',
             });
-
-            channelLog.save();
           }
 
           generals.map(general =>
@@ -67,14 +65,11 @@ const busterOfTheDay = client =>
           );
         })
         .catch(err => {
-          const channelErrorLog = new Logs({
-            timestamp: new Date().toISOString(),
+          createLogs({
             log: 'ERROR FINDING TEXT CHANNEL',
             error: JSON.stringify(err),
-            type: 'DISCORD_CHANNEL',
+            type: 'DISCORD',
           });
-
-          channelErrorLog.save();
         });
 
       // only save buster data for my server
@@ -84,13 +79,10 @@ const busterOfTheDay = client =>
         });
 
         if (!existingBuster) {
-          const createBusterLog = new Logs({
-            timestamp: new Date().toISOString(),
+          createLogs({
             log: `BUSTER RECORD DOES NOT EXIST ...CREATING NEW BUSTER RECORD FOR ${randomMemberId}`,
-            type: 'BUSTER_DATABASE',
+            type: 'DATABASE',
           });
-
-          await createBusterLog.save();
 
           const newBuster = new Buster({
             discordId: randomMemberId,
@@ -100,15 +92,11 @@ const busterOfTheDay = client =>
           });
 
           await newBuster.save();
-          console.log('new buster record sucessfully created');
         } else {
-          const busterFoundLog = new Logs({
-            timestamp: new Date().toISOString(),
+          createLogs({
             log: `BUSTER RECORD ${existingBuster.username} FOUND ...UPDATING BUSTER`,
-            type: 'BUSTER_DATABASE',
+            type: 'DATABASE',
           });
-
-          await busterFoundLog.save();
 
           const { datesWon } = existingBuster;
 
@@ -124,50 +112,35 @@ const busterOfTheDay = client =>
             { new: true },
             async (err, busterAfterUpdate) => {
               if (err) {
-                console.log('error updating buster record \n', err);
-                const updateBusterErrorLog = new Logs({
+                createLogs({
+                  log: `ERROR UPDATING BUSTER RECORD ${existingBuster.username}`,
+                  type: 'DATABASE',
                   error: JSON.stringify(err),
-                  timestamp: new Date().toISOString(),
-                  log: `ERROR UPDATING BUSTER RECORD ${existingBuster.id}`,
-                  type: 'BUSTER_DATABASE',
                 });
-
-                await updateBusterErrorLog.save();
               }
-              if (busterAfterUpdate) {
-                console.log('buster record sucessfully updated');
-                const busterUpdatedLog = new Logs({
-                  timestamp: new Date().toISOString(),
-                  log: `BUSTER RECORD ${existingBuster.id} SUCESSFULLY UPDATED`,
-                  type: 'BUSTER_DATABASE',
+              if (busterAfterUpdate)
+                createLogs({
+                  log: `BUSTER RECORD ${existingBuster.username} SUCESSFULLY UPDATED`,
+                  type: 'DATABASE',
                 });
-
-                await busterUpdatedLog.save();
-              }
             },
           );
         }
       }
     }),
   )
-    .then(() => {
-      const mainLog = new Logs({
-        timestamp: new Date().toISOString(),
+    .then(() =>
+      createLogs({
         log: 'BOTD SUCESSFULLY EXECUTED',
         type: 'BOTD',
-      });
-
-      mainLog.save();
-    })
-    .catch(err => {
-      const errLog = new Logs({
-        timestamp: new Date().toISOString(),
+      }),
+    )
+    .catch(err =>
+      createLogs({
         log: 'BOTD_ERROR',
         error: JSON.stringify(err),
         type: 'BOTD',
-      });
-
-      errLog.save();
-    });
+      }),
+    );
 
 module.exports = busterOfTheDay;

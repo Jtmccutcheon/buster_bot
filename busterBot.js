@@ -7,6 +7,7 @@ const busterOfTheDay = require('./operations/busterOfTheDay');
 const busterOfTheMonth = require('./operations/busterOfTheMonth');
 const busterOfTheYear = require('./operations/busterOfTheYear');
 const dailyBusterBackup = require('./operations/dailyBusterBackup');
+const dailyLogBackup = require('./operations/dailyLogBackup');
 const isLastDayOfMonth = require('./utils/isLastDayOfMonth');
 
 // Buster of the day
@@ -31,22 +32,32 @@ cron.schedule(
   CRON_OPTIONS,
 );
 
-// daily db backup
-cron.schedule(
-  CRON_EXPRESSIONS.backup,
-  () => {
-    console.log('creating back up');
-    dailyBusterBackup();
-  },
-  CRON_OPTIONS,
-);
-
 // Buster of the year
 cron.schedule(
   CRON_EXPRESSIONS.boty,
   () => {
     console.log('running buster of the year');
     createBusterBotClient(busterOfTheYear);
+  },
+  CRON_OPTIONS,
+);
+
+// daily db backup
+cron.schedule(
+  CRON_EXPRESSIONS.backup,
+  () => {
+    console.log('creating buster back up');
+    createBusterBotClient(dailyBusterBackup);
+  },
+  CRON_OPTIONS,
+);
+
+// daily Log backup
+cron.schedule(
+  CRON_EXPRESSIONS.debug,
+  () => {
+    console.log('creating logs back up');
+    createBusterBotClient(dailyLogBackup);
   },
   CRON_OPTIONS,
 );

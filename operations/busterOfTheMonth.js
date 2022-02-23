@@ -34,7 +34,6 @@ const busterOfTheMonth = async client =>
         // filters datesWons to only current month
         // as well as extra mongo db metadata
         const busterDoodle = bustersWithWinsThisMonth.map(b => ({
-          id: b.id,
           discordId: b.discordId,
           username: b.username,
           avatarUrl: b.avatarUrl,
@@ -102,7 +101,7 @@ const busterOfTheMonth = async client =>
           // message channel with buster winners
           generals.map(general =>
             general.send(
-              `Congratulations ${winnerString()} on becoming Buster(s) of the Month ${getMonthName(
+              `Congratulations ${winnerString()}on becoming Buster(s) of the Month ${getMonthName(
                 monthIndex,
               )} ${year}`,
             ),

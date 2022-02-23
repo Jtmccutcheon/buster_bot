@@ -16,7 +16,7 @@ const dailyBusterBackup = async () => {
 
     // save local copy
     fs.writeFile(
-      `./backups/${date}.json`,
+      `./backups/busters/${date}.json`,
       JSON.stringify(orderedBusters),
       err => {
         if (err) {
@@ -43,7 +43,7 @@ const dailyBusterBackup = async () => {
   } catch (error) {
     const errorLog = new Logs({
       timestamp: new Date().toISOString(),
-      log: 'DAILY BACKUP ERROR',
+      log: 'DAILY BUSTER BACKUP ERROR',
       error: JSON.stringify(error),
       type: 'BUSTER_DATABASE',
     });

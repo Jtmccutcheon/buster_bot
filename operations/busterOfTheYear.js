@@ -27,7 +27,6 @@ const busterOfTheYear = async client =>
         // filters datesWons to only current year
         // as well as extra mongo db metadata
         const busterDoodle = bustersWithWinsThisYear.map(b => ({
-          id: b.id,
           discordId: b.discordId,
           username: b.username,
           avatarUrl: b.avatarUrl,
@@ -116,6 +115,8 @@ const busterOfTheYear = async client =>
         const { roles } = await guild;
         const serverRoles = await roles.fetch();
         const prevYearRole = serverRoles.find(r =>
+          // have to use includes for now instead of === because
+          // 2021 has an * can updat next year
           r.name.includes(`BOTY ${Number(year) - 1}`),
         );
 
