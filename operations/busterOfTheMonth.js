@@ -1,10 +1,12 @@
 const Buster = require('../models/Buster');
 const BusterOTM = require('../models/BusterOTM');
-const Logs = require('../models/Logs');
-const getMonthString = require('../utils/getMonthString');
-const getMonthName = require('../utils/getMonthName');
-const getPrevMonthIndex = require('../utils/getPrevMonthIndex');
-const getColor = require('../utils/getColor');
+const createLogs = require('../db/createLogs');
+const {
+  getColor,
+  getMonthString,
+  getMonthName,
+  getPrevMonthIndex,
+} = require('../utils');
 
 const busterOfTheMonth = async client =>
   Promise.all(
@@ -16,12 +18,10 @@ const busterOfTheMonth = async client =>
         const monthIndex = date.getMonth();
         const searchString = `${year}-${getMonthString(monthIndex)}`;
 
-        const botmLog = new Logs({
-          timestamp: new Date().toISOString(),
+        createLogs({
           log: `BOTM ${getMonthName(monthIndex)} ${year} INITIATED`,
           type: 'BOTM',
         });
-        await botmLog.save();
 
         const busters = await Buster.find({});
 
@@ -56,12 +56,10 @@ const busterOfTheMonth = async client =>
           b => b.datesWon.length === getMostWins(),
         );
 
-        const winnerLog = new Logs({
-          timestamp: new Date().toISOString(),
+        createLogs({
           log: `winners: ${winners.map(w => w.username).join(',')}`,
           type: 'BOTM',
         });
-        await winnerLog.save();
 
         // create a string to mention winners
         const winnerString = () => {
@@ -89,14 +87,12 @@ const busterOfTheMonth = async client =>
             ['text-lords', 'general', 'buster'].includes(textChannel.name),
           );
 
-          const channelLog = new Logs({
-            timestamp: new Date().toISOString(),
+          createLogs({
             log: `POSTING BOTM TO GUILD ${guild.name} IN CHANNELS ${generals
               .map(general => general.name)
               .join(',')}`,
-            type: 'DISCORD_CHANNEL',
+            type: 'DISCORD',
           });
-          channelLog.save();
 
           // message channel with buster winners
           generals.map(general =>
@@ -128,12 +124,11 @@ const busterOfTheMonth = async client =>
           position,
         };
         roles.create(newRole);
-        const createRoleLog = new Logs({
-          timestamp: new Date().toISOString(),
+
+        createLogs({
           log: `CREATING NEW ROLE BOTM ${getMonthName(monthIndex)} ${year}`,
-          type: 'DISCORD_CHANNEL',
+          type: 'DISCORD',
         });
-        await createRoleLog.save();
 
         // get members from server that match winnerIds
         const members = await guild.members
@@ -152,15 +147,12 @@ const busterOfTheMonth = async client =>
         // add role to winners
         members.map(m => m.roles.add(botmRole));
 
-        const addedRoleLog = new Logs({
-          timestamp: new Date().toISOString(),
+        createLogs({
           log: `ADDING ROLE ${botmRole.name} TO MEMBERS ${members
             .map(m => m.user.username)
             .join(',')}`,
-          type: 'DISCORD_CHANNEL',
+          type: 'DISCORD',
         });
-
-        await addedRoleLog.save();
 
         const newBusterOTM = new BusterOTM({
           year,
@@ -169,29 +161,27 @@ const busterOfTheMonth = async client =>
         });
 
         await newBusterOTM.save();
+        createLogs({
+          log: `CREATING BOTM RECORD for ${getMonthName(monthIndex)} ${year}`,
+          type: 'DATABASE',
+        });
       }
 
       return null;
     }),
   )
     .then(() => {
-      const mainLog = new Logs({
-        timestamp: new Date().toISOString(),
+      createLogs({
         log: 'BOTM SUCESSFULLY EXECUTED',
         type: 'BOTM',
       });
-
-      mainLog.save();
     })
     .catch(err => {
-      const errLog = new Logs({
-        timestamp: new Date().toISOString(),
+      createLogs({
         log: 'BOTM_ERROR',
         error: JSON.stringify(err),
         type: 'BOTM',
       });
-
-      errLog.save();
     });
 
 module.exports = busterOfTheMonth;

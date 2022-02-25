@@ -3,12 +3,14 @@ require('dotenv').config();
 const cron = require('node-cron');
 const { CRON_EXPRESSIONS, CRON_OPTIONS } = require('./constants');
 const createBusterBotClient = require('./createBusterBotClient');
-const busterOfTheDay = require('./operations/busterOfTheDay');
-const busterOfTheMonth = require('./operations/busterOfTheMonth');
-const busterOfTheYear = require('./operations/busterOfTheYear');
-const dailyBusterBackup = require('./operations/dailyBusterBackup');
-const dailyLogBackup = require('./operations/dailyLogBackup');
 const isLastDayOfMonth = require('./utils/isLastDayOfMonth');
+const {
+  busterOfTheDay,
+  busterOfTheMonth,
+  busterOfTheYear,
+  dailyBusterBackup,
+  dailyLogBackup,
+} = require('./operations');
 
 // Buster of the day
 cron.schedule(
@@ -54,7 +56,7 @@ cron.schedule(
 
 // daily Log backup
 cron.schedule(
-  CRON_EXPRESSIONS.debug,
+  CRON_EXPRESSIONS.logBackup,
   () => {
     console.log('creating logs back up');
     createBusterBotClient(dailyLogBackup);

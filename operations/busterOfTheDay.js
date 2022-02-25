@@ -1,9 +1,8 @@
 /* eslint-disable no-console */
 const { get, sample } = require('lodash');
 const Buster = require('../models/Buster');
-const Logs = require('../models/Logs');
-const fetchQuote = require('../utils/fetchQuote');
-const createLogs = require('../utils/createLogs');
+const { createBuster, updateBuster, createLogs } = require('../db');
+const { fetchQuote } = require('../utils');
 
 const busterOfTheDay = client =>
   Promise.all(
@@ -65,11 +64,14 @@ const busterOfTheDay = client =>
           );
         })
         .catch(err => {
-          createLogs({
-            log: 'ERROR FINDING TEXT CHANNEL',
-            error: JSON.stringify(err),
-            type: 'DISCORD',
-          });
+          // only collect logs for my server
+          if (guild.name === 'Keylords') {
+            createLogs({
+              log: 'ERROR FINDING TEXT CHANNEL',
+              error: JSON.stringify(err),
+              type: 'DISCORD',
+            });
+          }
         });
 
       // only save buster data for my server
@@ -79,52 +81,23 @@ const busterOfTheDay = client =>
         });
 
         if (!existingBuster) {
-          createLogs({
-            log: `BUSTER RECORD DOES NOT EXIST ...CREATING NEW BUSTER RECORD FOR ${randomMemberId}`,
-            type: 'DATABASE',
-          });
-
-          const newBuster = new Buster({
+          createBuster({
             discordId: randomMemberId,
             username: randomMemberUsername,
             avatarUrl: randomMemberAvatarURL,
             datesWon: [dateWon],
           });
-
-          await newBuster.save();
         } else {
-          createLogs({
-            log: `BUSTER RECORD ${existingBuster.username} FOUND ...UPDATING BUSTER`,
-            type: 'DATABASE',
-          });
-
-          const { datesWon } = existingBuster;
-
           const updatedBuster = {
             username: randomMemberUsername,
             avatarUrl: randomMemberAvatarURL,
-            datesWon: [...datesWon, dateWon],
+            datesWon: [...existingBuster.datesWon, dateWon],
           };
 
-          Buster.updateOne(
-            { discordId: randomMemberId },
+          updateBuster({
+            discordId: randomMemberId,
             updatedBuster,
-            { new: true },
-            async (err, busterAfterUpdate) => {
-              if (err) {
-                createLogs({
-                  log: `ERROR UPDATING BUSTER RECORD ${existingBuster.username}`,
-                  type: 'DATABASE',
-                  error: JSON.stringify(err),
-                });
-              }
-              if (busterAfterUpdate)
-                createLogs({
-                  log: `BUSTER RECORD ${existingBuster.username} SUCESSFULLY UPDATED`,
-                  type: 'DATABASE',
-                });
-            },
-          );
+          });
         }
       }
     }),
@@ -135,12 +108,14 @@ const busterOfTheDay = client =>
         type: 'BOTD',
       }),
     )
-    .catch(err =>
-      createLogs({
-        log: 'BOTD_ERROR',
-        error: JSON.stringify(err),
-        type: 'BOTD',
-      }),
+    .catch(
+      err =>
+        console.log(err) ||
+        createLogs({
+          log: 'BOTD_ERROR',
+          error: JSON.stringify(err),
+          type: 'BOTD',
+        }),
     );
 
 module.exports = busterOfTheDay;

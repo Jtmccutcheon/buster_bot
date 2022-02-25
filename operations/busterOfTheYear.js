@@ -1,6 +1,7 @@
 const Buster = require('../models/Buster');
 const BusterOTY = require('../models/BusterOTY');
 const Logs = require('../models/Logs');
+const createLogs = require('../db/createLogs');
 const getColor = require('../utils/getColor');
 
 const busterOfTheYear = async client =>
@@ -9,12 +10,11 @@ const busterOfTheYear = async client =>
       // we are only saving data for my server
       if (guild.name === 'Keylords') {
         const year = new Date().getFullYear().toString();
-        const botyLog = new Logs({
-          timestamp: new Date().toISOString(),
+
+        createLogs({
           log: `BOTY ${year} INITIATED`,
           type: 'BOTY',
         });
-        await botyLog.save();
 
         const busters = await Buster.find({});
 
@@ -49,12 +49,10 @@ const busterOfTheYear = async client =>
           b => b.datesWon.length === getMostWins(),
         );
 
-        const winnerLog = new Logs({
-          timestamp: new Date().toISOString(),
+        createLogs({
           log: `winners: ${winners.map(w => w.username).join(',')}`,
           type: 'BOTY',
         });
-        await winnerLog.save();
 
         // create a string to mention winners
         const winnerString = () => {
@@ -84,15 +82,13 @@ const busterOfTheYear = async client =>
               ['text-lords', 'general', 'buster'].includes(textChannel.name),
             );
 
-            const channelLog = new Logs({
-              timestamp: new Date().toISOString(),
+            createLogs({
               log: `POSTING BOTY TO GUILD ${guild.name} IN CHANNELS ${generals
                 .map(general => general.name)
                 .join(',')}`,
-              type: 'DISCORD_CHANNEL',
+              type: 'DISCORD',
             });
 
-            channelLog.save();
             // message channel with buster winners
             generals.map(general =>
               general.send(
@@ -101,14 +97,11 @@ const busterOfTheYear = async client =>
             );
           })
           .catch(err => {
-            const channelErrorLog = new Logs({
-              timestamp: new Date().toISOString(),
+            createLogs({
               log: 'ERROR FINDING TEXT CHANNEL',
               error: JSON.stringify(err),
-              type: 'DISCORD_CHANNEL',
+              type: 'DISCORD',
             });
-
-            channelErrorLog.save();
           });
 
         // create role for boty
@@ -153,36 +146,27 @@ const busterOfTheYear = async client =>
 
         await newBusterOTY.save();
 
-        const newBusterOTYLog = new Logs({
-          timestamp: new Date().toISOString(),
+        createLogs({
           log: `CREATING BOTY RECORD ${year}`,
-          type: 'BUSTER_DATABASE',
+          type: 'DATABASE',
         });
-
-        await newBusterOTYLog.save();
       }
 
       return null;
     }),
   )
     .then(() => {
-      const mainLog = new Logs({
-        timestamp: new Date().toISOString(),
+      createLogs({
         log: 'BOTY SUCESSFULLY EXECUTED',
         type: 'BOTY',
       });
-
-      mainLog.save();
     })
     .catch(err => {
-      const errLog = new Logs({
-        timestamp: new Date().toISOString(),
+      createLogs({
         log: 'BOTY_ERROR',
         error: JSON.stringify(err),
         type: 'BOTY',
       });
-
-      errLog.save();
     });
 
 module.exports = busterOfTheYear;

@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 const Discord = require('discord.js');
-const dbConnect = require('./dbConnect');
+const dbConnect = require('./db/dbConnect');
 
 const createBusterBotClient = operation => {
   dbConnect();

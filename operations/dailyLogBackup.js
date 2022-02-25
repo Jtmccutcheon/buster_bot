@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 const fs = require('fs');
 const moment = require('moment');
+const { createLogs } = require('../db');
 const Logs = require('../models/Logs');
 
 const dailyLogBackup = async () => {
@@ -11,20 +12,21 @@ const dailyLogBackup = async () => {
     const logs = await Logs.find({ timestamp: startsWithDate });
 
     // save local copy
-    fs.writeFile(`./backups/logs/${date}.json`, JSON.stringify(logs), err => {
-      if (err) {
-        console.log(err);
+    fs.writeFile(`./backups/logs/${date}.json`, JSON.stringify(logs), error => {
+      if (error) {
+        createLogs({
+          log: 'DAILY BUSTER BACKUP ERROR',
+          error: JSON.stringify(error),
+          type: 'DATABASE',
+        });
       }
     });
   } catch (error) {
-    const errorLog = new Logs({
-      timestamp: new Date().toIsoString(),
+    createLogs({
       log: 'DAILY LOG BACKUP ERROR',
       error: JSON.stringify(error),
-      type: 'BUSTER_DATABASE',
+      type: 'DATABASE',
     });
-
-    await errorLog.save();
   }
 
   return null;
