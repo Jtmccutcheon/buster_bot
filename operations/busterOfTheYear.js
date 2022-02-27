@@ -1,10 +1,9 @@
 const Buster = require('../models/Buster');
 const BusterOTY = require('../models/BusterOTY');
-const Logs = require('../models/Logs');
 const createLogs = require('../db/createLogs');
-const getColor = require('../utils/getColor');
+const { getColor, getMostWins, createWinnerString } = require('../utils');
 
-const busterOfTheYear = async client =>
+const busterOfTheYear = client =>
   Promise.all(
     client.guilds.cache.map(async guild => {
       // we are only saving data for my server
@@ -34,20 +33,10 @@ const busterOfTheYear = async client =>
         }));
 
         // get most wins for this current month
-        const getMostWins = () => {
-          let max = 0;
-          busterDoodle.forEach(b => {
-            if (max < b.datesWon.length) {
-              max = b.datesWon.length;
-            }
-          });
-          return max;
-        };
+        const maxWins = getMostWins(busterDoodle);
 
         // filter busters with most wins
-        const winners = busterDoodle.filter(
-          b => b.datesWon.length === getMostWins(),
-        );
+        const winners = busterDoodle.filter(b => b.datesWon.length === maxWins);
 
         createLogs({
           log: `winners: ${winners.map(w => w.username).join(',')}`,
@@ -55,12 +44,7 @@ const busterOfTheYear = async client =>
         });
 
         // create a string to mention winners
-        const winnerString = () => {
-          let str = '';
-          // eslint-disable-next-line no-return-assign
-          winners.map(w => (str += `<@${w.discordId}> `));
-          return str;
-        };
+        const winnerString = createWinnerString(winners);
 
         // get winner ids
         const winnerIds = winners.map(w => w.discordId);
@@ -79,7 +63,7 @@ const busterOfTheYear = async client =>
             // ['text-lords', 'general', 'buster']
 
             const generals = textChannels.filter(textChannel =>
-              ['text-lords', 'general', 'buster'].includes(textChannel.name),
+              ['buster-testing'].includes(textChannel.name),
             );
 
             createLogs({
@@ -92,7 +76,7 @@ const busterOfTheYear = async client =>
             // message channel with buster winners
             generals.map(general =>
               general.send(
-                `Congratulations to your Buster(s) of the Year for ${year} ${winnerString()}`,
+                `Congratulations to your Buster(s) of the Year for ${year} ${winnerString}`,
               ),
             );
           })
@@ -163,7 +147,7 @@ const busterOfTheYear = async client =>
     })
     .catch(err => {
       createLogs({
-        log: 'BOTY_ERROR',
+        log: 'BOTY ERROR',
         error: JSON.stringify(err),
         type: 'BOTY',
       });

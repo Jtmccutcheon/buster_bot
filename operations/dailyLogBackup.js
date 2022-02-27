@@ -15,7 +15,7 @@ const dailyLogBackup = async () => {
     fs.writeFile(`./backups/logs/${date}.json`, JSON.stringify(logs), error => {
       if (error) {
         createLogs({
-          log: 'DAILY BUSTER BACKUP ERROR',
+          log: `ERROR SAVING LOCAL LOG BACKUP`,
           error: JSON.stringify(error),
           type: 'DATABASE',
         });
@@ -23,7 +23,7 @@ const dailyLogBackup = async () => {
     });
   } catch (error) {
     createLogs({
-      log: 'DAILY LOG BACKUP ERROR',
+      log: `ERROR FETCHING LOGS FOR ${date}`,
       error: JSON.stringify(error),
       type: 'DATABASE',
     });

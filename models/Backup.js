@@ -29,4 +29,4 @@ const BackupSchema = new mongoose.Schema({
   ],
 });
 
-module.exports = Backup = mongoose.model(`Backup`, BackupSchema);
+module.exports = Backup = mongoose.model('Backup', BackupSchema);

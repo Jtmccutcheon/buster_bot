@@ -6,12 +6,14 @@ const {
   getMonthString,
   getMonthName,
   getPrevMonthIndex,
+  getMostWins,
+  createWinnerString,
 } = require('../utils');
 
-const busterOfTheMonth = async client =>
+const busterOfTheMonth = client =>
   Promise.all(
     client.guilds.cache.map(async guild => {
-      // we are only saving data for my server
+      // we are only tracking botm for my server
       if (guild.name === 'Keylords') {
         const date = new Date();
         const year = date.getFullYear();
@@ -26,8 +28,7 @@ const busterOfTheMonth = async client =>
         const busters = await Buster.find({});
 
         const bustersWithWinsThisMonth = busters.filter(b => {
-          const { datesWon } = b;
-          const dates = datesWon.filter(d => d.startsWith(searchString));
+          const dates = b.datesWon.filter(d => d.startsWith(searchString));
           return dates.length > 0;
         });
 
@@ -41,20 +42,10 @@ const busterOfTheMonth = async client =>
         }));
 
         // get most wins for this current month
-        const getMostWins = () => {
-          let max = 0;
-          busterDoodle.forEach(b => {
-            if (max < b.datesWon.length) {
-              max = b.datesWon.length;
-            }
-          });
-          return max;
-        };
+        const maxWins = getMostWins(busterDoodle);
 
         // filter busters with most wins
-        const winners = busterDoodle.filter(
-          b => b.datesWon.length === getMostWins(),
-        );
+        const winners = busterDoodle.filter(b => b.datesWon.length === maxWins);
 
         createLogs({
           log: `winners: ${winners.map(w => w.username).join(',')}`,
@@ -62,12 +53,7 @@ const busterOfTheMonth = async client =>
         });
 
         // create a string to mention winners
-        const winnerString = () => {
-          let str = '';
-          // eslint-disable-next-line no-return-assign
-          winners.map(w => (str += `<@${w.discordId}> `));
-          return str;
-        };
+        const winnerString = createWinnerString(winners);
 
         // get winner ids
         const winnerIds = winners.map(w => w.discordId);
@@ -97,7 +83,7 @@ const busterOfTheMonth = async client =>
           // message channel with buster winners
           generals.map(general =>
             general.send(
-              `Congratulations ${winnerString()}on becoming Buster(s) of the Month ${getMonthName(
+              `Congratulations ${winnerString}on becoming Buster(s) of the Month ${getMonthName(
                 monthIndex,
               )} ${year}`,
             ),
@@ -105,8 +91,7 @@ const busterOfTheMonth = async client =>
         });
 
         // create role for current month
-        const { roles } = await guild;
-        const serverRoles = await roles.fetch();
+        const serverRoles = await guild.roles.fetch();
 
         const prevMonthRole = serverRoles.find(
           r =>
@@ -123,7 +108,7 @@ const busterOfTheMonth = async client =>
           hoist: true,
           position,
         };
-        roles.create(newRole);
+        guild.roles.create(newRole);
 
         createLogs({
           log: `CREATING NEW ROLE BOTM ${getMonthName(monthIndex)} ${year}`,
@@ -139,7 +124,7 @@ const busterOfTheMonth = async client =>
           .catch(() => []);
 
         // get role we created earlier from the server
-        const refetchRoles = await roles.fetch();
+        const refetchRoles = await guild.roles.fetch();
         const botmRole = refetchRoles.find(
           r => r.name === `BOTM ${getMonthName(monthIndex)} ${year}`,
         );
@@ -178,7 +163,7 @@ const busterOfTheMonth = async client =>
     })
     .catch(err => {
       createLogs({
-        log: 'BOTM_ERROR',
+        log: 'BOTM ERROR',
         error: JSON.stringify(err),
         type: 'BOTM',
       });
