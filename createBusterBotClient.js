@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 const Discord = require('discord.js');
-const dbConnect = require('./db/dbConnect');
+const { dbConnect, dbDisconnect } = require('./db');
 
 const createBusterBotClient = operation => {
   dbConnect();
@@ -18,10 +18,19 @@ const createBusterBotClient = operation => {
   });
 
   client.login(process.env.CLIENT_TOKEN).then(() =>
+    // wait 15 seconds and log out of discord
+    // may need to be longer the more servers
+    // buster bot is invited too
     setTimeout(() => {
       client.destroy();
     }, 15000),
   );
+
+  // wait 5 minutes for all cron jobs to finish
+  // and close mongo connection
+  setTimeout(() => {
+    dbDisconnect();
+  }, 300000);
 };
 
 module.exports = createBusterBotClient;

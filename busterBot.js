@@ -10,7 +10,7 @@ const {
   busterOfTheYear,
   dailyBusterBackup,
   dailyLogBackup,
-} = require('./operations');
+} = require('./jobs');
 
 // Buster of the day
 cron.schedule(
