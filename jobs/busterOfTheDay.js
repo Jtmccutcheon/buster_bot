@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
-const { get, sample } = require('lodash');
 const Buster = require('../models/Buster');
 const { createBuster, updateBuster, createLogs } = require('../db');
-const { fetchQuote } = require('../utils');
+const { fetchQuote, getBotd } = require('../utils');
 
 const busterOfTheDay = client =>
   Promise.all(
@@ -14,20 +13,12 @@ const busterOfTheDay = client =>
         )
         .catch(() => []);
 
-      const randomMember = sample(members);
-
-      const randomMemberId = get(
-        randomMember,
-        'user.id',
-        '404 Buster not found',
-      );
-      const randomMemberAvatarURL = randomMember.displayAvatarURL();
-      const randomMemberUsername = get(
-        randomMember,
-        'user.username',
-        '404 buster not found',
-      );
-      const dateWon = new Date().toISOString();
+      const {
+        randomMemberId,
+        randomMemberAvatarURL,
+        randomMemberUsername,
+        dateWon,
+      } = getBotd(members);
 
       const quote = await fetchQuote();
 
@@ -108,14 +99,12 @@ const busterOfTheDay = client =>
         type: 'BOTD',
       }),
     )
-    .catch(
-      err =>
-        console.log(err) ||
-        createLogs({
-          log: 'BOTD_ERROR',
-          error: JSON.stringify(err),
-          type: 'BOTD',
-        }),
+    .catch(err =>
+      createLogs({
+        log: 'BOTD ERROR',
+        error: JSON.stringify(err),
+        type: 'BOTD',
+      }),
     );
 
 module.exports = busterOfTheDay;

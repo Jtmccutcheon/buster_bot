@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 const Discord = require('discord.js');
 const { dbConnect, dbDisconnect } = require('./db');
+require('dotenv').config();
 
 const createBusterBotClient = operation => {
   dbConnect();
@@ -29,6 +30,7 @@ const createBusterBotClient = operation => {
   // wait 5 minutes for all cron jobs to finish
   // and close mongo connection
   setTimeout(() => {
+    console.log('...disconnecting from mongoDB');
     dbDisconnect();
   }, 300000);
 };

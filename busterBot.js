@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-require('dotenv').config();
 const cron = require('node-cron');
 const { CRON_EXPRESSIONS, CRON_OPTIONS } = require('./constants');
 const createBusterBotClient = require('./createBusterBotClient');

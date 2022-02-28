@@ -6,6 +6,7 @@ const getPrevMonthIndex = require('./getPrevMonthIndex');
 const isLastDayOfMonth = require('./isLastDayOfMonth');
 const createWinnerString = require('./createWinnerString');
 const getMostWins = require('./getMostWins');
+const getBotd = require('./getBotd');
 
 module.exports = {
   fetchQuote,
@@ -16,4 +17,5 @@ module.exports = {
   isLastDayOfMonth,
   createWinnerString,
   getMostWins,
+  getBotd,
 };
