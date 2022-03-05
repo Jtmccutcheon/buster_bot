@@ -12,15 +12,19 @@ const dailyLogBackup = async () => {
     const logs = await Logs.find({ timestamp: startsWithDate });
 
     // save local copy
-    fs.writeFile(`./backups/logs/${date}.json`, JSON.stringify(logs), error => {
-      if (error) {
-        createLogs({
-          log: `ERROR SAVING LOCAL LOG BACKUP`,
-          error: JSON.stringify(error),
-          type: 'DATABASE',
-        });
-      }
-    });
+    fs.writeFile(
+      `../backups/logs/${date}.json`,
+      JSON.stringify(logs),
+      error => {
+        if (error) {
+          createLogs({
+            log: `ERROR SAVING LOCAL LOG BACKUP`,
+            error: JSON.stringify(error),
+            type: 'DATABASE',
+          });
+        }
+      },
+    );
   } catch (error) {
     createLogs({
       log: `ERROR FETCHING LOGS FOR ${date}`,
