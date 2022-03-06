@@ -13,7 +13,7 @@ const dailyBusterBackup = async () => {
 
     // save local copy
     fs.writeFile(
-      `../backups/busters/${date}.json`,
+      `./backups/busters/${date}.json`,
       JSON.stringify(busters),
       error => {
         if (error) {
