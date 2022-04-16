@@ -7,6 +7,7 @@ const isLastDayOfMonth = require('./isLastDayOfMonth');
 const createWinnerString = require('./createWinnerString');
 const getMostWins = require('./getMostWins');
 const getBotd = require('./getBotd');
+const getBotdMessage = require('./getBotdMessage');
 
 module.exports = {
   fetchQuote,
@@ -18,4 +19,5 @@ module.exports = {
   createWinnerString,
   getMostWins,
   getBotd,
+  getBotdMessage,
 };

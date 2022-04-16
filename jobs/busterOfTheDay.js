@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 const Buster = require('../models/Buster');
 const { createBuster, updateBuster, createLogs } = require('../db');
-const { fetchQuote, getBotd } = require('../utils');
+const { fetchQuote, getBotd, getBotdMessage } = require('../utils');
 
 const busterOfTheDay = client =>
   Promise.all(
@@ -18,7 +18,9 @@ const busterOfTheDay = client =>
         randomMemberAvatarURL,
         randomMemberUsername,
         dateWon,
-      } = getBotd(members);
+        datesWon,
+        mostWins,
+      } = await getBotd(members);
 
       const quote = await fetchQuote();
 
@@ -50,7 +52,7 @@ const busterOfTheDay = client =>
 
           generals.map(general =>
             general.send(
-              `Its 6:09 again which means its time to announce Buster of the Day! Congratulations <@${randomMemberId}>!!! You did it!! \nAnd remember, "${quote.q}" - ${quote.a}\nFor advanced buster analytics please visit https://busteranalytics-beta.netlify.app/`,
+              getBotdMessage({ quote, datesWon, randomMemberId, mostWins }),
             ),
           );
         })

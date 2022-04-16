@@ -12,7 +12,10 @@ const CRON_OPTIONS = {
   timezone: 'America/New_York',
 };
 
+const MILESTONE = 5 || 10;
+
 module.exports = {
   CRON_EXPRESSIONS,
   CRON_OPTIONS,
+  MILESTONE,
 };
