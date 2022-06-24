@@ -9,11 +9,15 @@ const getBotdMessage = ({ quote, datesWon, randomMemberId, mostWins }) => {
 
   const leadChangeMessage = {
     [true]: 'You did it',
-    [datesWon.length + 1 === mostWins]: 'Tied the leader',
-    [datesWon.length + 1 > mostWins]: 'Gained the lead',
+    [datesWon.length + 1 === mostWins]: `Tied the leader ${
+      datesWon.length + 1
+    } wins`,
+    [datesWon.length + 1 > mostWins]: `Gained the lead  ${
+      datesWon.length + 1
+    } wins`,
   }.true;
 
-  return `Its 6:09 again which means its time to announce Buster of the Day! Congratulations${milestoneMessage} <@${randomMemberId}>!!! ${leadChangeMessage}!! \nAnd remember, "${quote.q}" - ${quote.a}\nFor advanced buster analytics please visit https://busteranalytics-beta.netlify.app/`;
+  return `Its 6:09 again which means its time to announce Buster of the Day! Congratulations${milestoneMessage} <@${randomMemberId}>!!! ${leadChangeMessage}!! \nAnd remember, "${quote.q}" - ${quote.a}\nFor advanced buster analytics please visit https://busteranalytics.netlify.app/`;
 };
 
 module.exports = getBotdMessage;
