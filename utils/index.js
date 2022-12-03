@@ -8,6 +8,8 @@ const createWinnerString = require('./createWinnerString');
 const getMostWins = require('./getMostWins');
 const getBotd = require('./getBotd');
 const getBotdMessage = require('./getBotdMessage');
+const getHolidayMessage = require('./getHolidayMessage');
+const createHolidayRole = require('./createHolidayRole');
 
 module.exports = {
   fetchQuote,
@@ -20,4 +22,6 @@ module.exports = {
   getMostWins,
   getBotd,
   getBotdMessage,
+  getHolidayMessage,
+  createHolidayRole,
 };

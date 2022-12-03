@@ -12,10 +12,11 @@ const getHolidayMessage = () => {
     [date === '06-09']: HOLIDAYS.sixNine,
     [date === '07-04']: HOLIDAYS.july4th,
     [date === '10-31']: HOLIDAYS.halloween,
+    [date === '12-02']: HOLIDAYS.busterAnniversary,
     [date === '12-24']: HOLIDAYS.christmasEve,
     [date === '12-25']: HOLIDAYS.christmas,
     [date === '12-31']: HOLIDAYS.newYearsEve,
   }.true;
 };
 
-module.exports = getHolidayMessage;
+module.exports = { getHolidayMessage };

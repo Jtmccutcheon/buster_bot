@@ -1,7 +1,12 @@
 /* eslint-disable no-console */
 const Buster = require('../models/Buster');
 const { createBuster, updateBuster, createLogs } = require('../db');
-const { fetchQuote, getBotd, getBotdMessage } = require('../utils');
+const {
+  fetchQuote,
+  getBotd,
+  getBotdMessage,
+  createHolidayRole,
+} = require('../utils');
 
 const busterOfTheDay = client =>
   Promise.all(
@@ -26,7 +31,7 @@ const busterOfTheDay = client =>
 
       await guild.channels
         .fetch()
-        .then(channels => {
+        .then(async channels => {
           const textChannels = channels.filter(
             channel => channel.type === 'GUILD_TEXT',
           );
@@ -49,6 +54,8 @@ const busterOfTheDay = client =>
               type: 'DISCORD',
             });
           }
+
+          await createHolidayRole(guild, randomMemberId, members);
 
           generals.map(general =>
             general.send(

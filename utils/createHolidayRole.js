@@ -1,6 +1,6 @@
 const moment = require('moment');
 const createLogs = require('../db/createLogs');
-const getHolidayMessage = require('./getHolidayMessage');
+const { getHolidayMessage } = require('./getHolidayMessage');
 const getColor = require('./getColor');
 
 const createHolidayRole = async (guild, randomMemberId, members) => {
@@ -24,9 +24,9 @@ const createHolidayRole = async (guild, randomMemberId, members) => {
       guild.roles.create(newRole);
 
       const roles = await guild.roles.fetch();
-      const role = roles.find(r => r.name === `${roleText} ${year}`);
+      const role = roles.find(r => r.name === `${roleText.slice(1)} ${year}`);
 
-      const user = members.find(m => m.user.id);
+      const user = members.find(m => m.user.id === randomMemberId);
 
       user.roles.add(role);
       createLogs({
