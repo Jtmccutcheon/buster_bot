@@ -63,7 +63,7 @@ const busterOfTheYear = client =>
             // ['text-lords', 'general', 'buster']
 
             const generals = textChannels.filter(textChannel =>
-              ['buster-testing'].includes(textChannel.name),
+              ['text-lords'].includes(textChannel.name),
             );
 
             createLogs({
