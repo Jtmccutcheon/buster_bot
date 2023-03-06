@@ -1,7 +1,14 @@
-const { MILESTONE, CRAFTY_BUSTERS } = require('../constants');
+const { MILESTONE, CRAFTY_BUSTERS, IRON_BUSTERS } = require('../constants');
 const { getHolidayMessage } = require('./getHolidayMessage');
 
-const getBotdMessage = ({ quote, datesWon, randomMemberId, mostWins }) => {
+const getBotdMessage = ({
+  quote,
+  datesWon,
+  randomMemberId,
+  mostWins,
+  usersWithMostWins,
+  aires,
+}) => {
   // have to use + 1 at this point in the code we have not updated the buster record in the database to include new win
   const milestoneMessage =
     (datesWon.length + 1) % MILESTONE === 0
@@ -16,17 +23,24 @@ const getBotdMessage = ({ quote, datesWon, randomMemberId, mostWins }) => {
     [datesWon.length + 1 > mostWins]: `Gained the lead  ${
       datesWon.length + 1
     } wins`,
+    [datesWon.length + 1 > mostWins &&
+    usersWithMostWins.length === 1 &&
+    usersWithMostWins[0].discordId === randomMemberId]: `Extended the lead ${
+      datesWon.length + 1
+    } wins`,
   }.true;
 
   const craftyMessage = CRAFTY_BUSTERS.includes(randomMemberId)
     ? `What's up crafty buster?`
     : '';
 
-  return `Its 6:09 again which means its time to announce Buster of the Day! Congratulations${milestoneMessage} <@${randomMemberId}>!!! ${craftyMessage} ${leadChangeMessage}${getHolidayMessage()}!! \nAnd remember, "${
+  const ironBuster = IRON_BUSTERS.includes(randomMemberId) ? 'Iron buster' : '';
+
+  return `Its 6:09 again which means its time to announce Buster of the Day! Congratulations${milestoneMessage} <@${randomMemberId}>!!! ${craftyMessage} ${ironBuster} ${leadChangeMessage}${getHolidayMessage()}!! And remember, "${
     quote.q
   }" - ${
     quote.a
-  }\nFor advanced buster analytics please visit https://busteranalytics.netlify.app/`;
+  } ${aires}\n\nFor advanced buster analytics please visit https://busteranalytics.netlify.app/`;
 };
 
 module.exports = getBotdMessage;

@@ -6,6 +6,7 @@ const {
   getBotd,
   getBotdMessage,
   createHolidayRole,
+  fetchOpenAICustomMessage,
 } = require('../utils');
 
 const busterOfTheDay = client =>
@@ -25,9 +26,19 @@ const busterOfTheDay = client =>
         dateWon,
         datesWon,
         mostWins,
+        usersWithMostWins,
+        randomMemberNickname,
       } = await getBotd(members);
 
       const quote = await fetchQuote();
+
+      const aires = await fetchOpenAICustomMessage(
+        randomMemberUsername,
+        datesWon,
+        quote,
+        randomMemberId,
+        randomMemberNickname,
+      );
 
       await guild.channels
         .fetch()
@@ -59,7 +70,15 @@ const busterOfTheDay = client =>
 
           generals.map(general =>
             general.send(
-              getBotdMessage({ quote, datesWon, randomMemberId, mostWins }),
+              getBotdMessage({
+                quote,
+                datesWon,
+                randomMemberId,
+                mostWins,
+                usersWithMostWins,
+                randomMemberUsername,
+                aires,
+              }),
             ),
           );
         })

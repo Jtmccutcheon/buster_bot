@@ -10,6 +10,7 @@ const getBotd = require('./getBotd');
 const getBotdMessage = require('./getBotdMessage');
 const getHolidayMessage = require('./getHolidayMessage');
 const createHolidayRole = require('./createHolidayRole');
+const fetchOpenAICustomMessage = require('./fetchOpenAICustomMessage');
 
 module.exports = {
   fetchQuote,
@@ -24,4 +25,5 @@ module.exports = {
   getBotdMessage,
   getHolidayMessage,
   createHolidayRole,
+  fetchOpenAICustomMessage,
 };
