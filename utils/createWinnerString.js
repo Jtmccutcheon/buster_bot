@@ -1,8 +1,5 @@
-const winnerString = winners => {
-  let str = '';
+const winnerString = winners =>
   // eslint-disable-next-line no-return-assign
-  winners.map(w => (str += `<@${w.discordId}> `));
-  return str;
-};
+  winners.map(w => `<@${w.discordId}> `).join();
 
 module.exports = winnerString;

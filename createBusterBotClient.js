@@ -29,10 +29,10 @@ const createBusterBotClient = operation => {
 
   // wait 5 minutes for all cron jobs to finish
   // and close mongo connection
-  setTimeout(() => {
-    console.log('...disconnecting from mongoDB');
-    dbDisconnect();
-  }, 300000);
+  // setTimeout(() => {
+  //   console.log('...disconnecting from mongoDB');
+  //   dbDisconnect();
+  // }, 300000);
 };
 
 module.exports = createBusterBotClient;

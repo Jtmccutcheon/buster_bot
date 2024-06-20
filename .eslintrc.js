@@ -10,7 +10,7 @@ module.exports = {
   extends: ['airbnb-base', 'prettier', 'plugin:jest/recommended'],
   plugins: ['prettier', 'jest'],
   rules: {
-    'no-promise-executor-return': [0],
-    'arrow-parens': [2, 'as-needed'],
+    // 'no-promise-executor-return': [0],
+    'arrow-parens': [1, 'as-needed'],
   },
 };

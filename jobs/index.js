@@ -3,6 +3,7 @@ const busterOfTheMonth = require('./busterOfTheMonth');
 const busterOfTheYear = require('./busterOfTheYear');
 const dailyBusterBackup = require('./dailyBusterBackup');
 const dailyLogBackup = require('./dailyLogBackup');
+const avatarUpdate = require('./avatarUpdate');
 
 module.exports = {
   busterOfTheDay,
@@ -10,4 +11,5 @@ module.exports = {
   busterOfTheYear,
   dailyBusterBackup,
   dailyLogBackup,
+  avatarUpdate,
 };

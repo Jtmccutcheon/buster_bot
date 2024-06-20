@@ -67,10 +67,10 @@ const busterOfTheMonth = client =>
           // ['buster-testing']
 
           // channels
-          // ['text-lords', 'general', 'buster']
+          // ['text-lords', 'buster']
 
           const generals = textChannels.filter(textChannel =>
-            ['text-lords', 'general', 'buster'].includes(textChannel.name),
+            ['text-lords', 'buster'].includes(textChannel.name),
           );
 
           createLogs({

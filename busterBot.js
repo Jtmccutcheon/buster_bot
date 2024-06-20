@@ -9,6 +9,7 @@ const {
   busterOfTheYear,
   dailyBusterBackup,
   dailyLogBackup,
+  avatarUpdate,
 } = require('./jobs');
 
 // Buster of the day
@@ -59,6 +60,16 @@ cron.schedule(
   () => {
     console.log('creating logs back up');
     createBusterBotClient(dailyLogBackup);
+  },
+  CRON_OPTIONS,
+);
+
+// daily Log backup
+cron.schedule(
+  CRON_EXPRESSIONS.avatarUpdate,
+  () => {
+    console.log('updating avatars');
+    createBusterBotClient(avatarUpdate);
   },
   CRON_OPTIONS,
 );

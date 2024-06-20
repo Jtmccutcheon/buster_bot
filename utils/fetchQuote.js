@@ -1,13 +1,11 @@
 const axios = require('axios');
-const { first } = require('lodash');
 
 const fetchQuote = () =>
   axios
     .get('https://zenquotes.io/api/random/')
-    .then(res => res.data)
-    .then(data => first(data))
+    .then(res => res.data[0])
     .catch(() => ({
-      q: 'qoute not found',
+      q: 'quote not found',
       a: 'buster_bot',
     }));
 

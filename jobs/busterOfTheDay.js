@@ -29,16 +29,17 @@ const busterOfTheDay = client =>
         usersWithMostWins,
         randomMemberNickname,
       } = await getBotd(members);
+      console.log(randomMemberUsername);
 
       const quote = await fetchQuote();
 
-      const aires = await fetchOpenAICustomMessage(
-        randomMemberUsername,
-        datesWon,
-        quote,
-        randomMemberId,
-        randomMemberNickname,
-      );
+      // const aires = await fetchOpenAICustomMessage(
+      //   randomMemberUsername,
+      //   datesWon,
+      //   quote,
+      //   randomMemberId,
+      //   randomMemberNickname,
+      // );
 
       await guild.channels
         .fetch()
@@ -68,6 +69,7 @@ const busterOfTheDay = client =>
 
           await createHolidayRole(guild, randomMemberId, members);
 
+          generals.map(general => general.send('fock arejay yo'));
           generals.map(general =>
             general.send(
               getBotdMessage({
@@ -77,7 +79,7 @@ const busterOfTheDay = client =>
                 mostWins,
                 usersWithMostWins,
                 randomMemberUsername,
-                aires,
+                // aires,
               }),
             ),
           );
